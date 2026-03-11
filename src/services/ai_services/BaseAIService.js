@@ -5,8 +5,11 @@ const { AIServiceError } = require('../../utils/error_handlers/AppError');
 
 class BaseAIService {
   constructor() {
-    this.client = new OpenAI({ apiKey: config.openai.apiKey });
-    this.model = config.openai.model;
+    this.client = new OpenAI({
+      apiKey: config.ai.apiKey,
+      baseURL: config.ai.baseUrl,
+    });
+    this.model = config.ai.model;
   }
 
   async callAI(systemPrompt, userPrompt, moduleName) {
