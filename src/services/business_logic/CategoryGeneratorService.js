@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
 const CategoryGeneratorAIService = require('../ai_services/CategoryGeneratorAIService');
 const { ProductMetadata, AIInteractionLog } = require('../../models/database_models');
 const logger = require('../../utils/logger');
@@ -10,7 +10,7 @@ class CategoryGeneratorService {
   }
 
   async categorizeProduct(productData) {
-    const productId = uuidv4();
+    const productId = crypto.randomUUID();
     let aiResult;
 
     try {

@@ -1,4 +1,4 @@
-const { v4: uuidv4 } = require('uuid');
+const crypto = require('crypto');
 const B2BProposalAIService = require('../ai_services/B2BProposalAIService');
 const { B2BProposal, AIInteractionLog } = require('../../models/database_models');
 const logger = require('../../utils/logger');
@@ -10,7 +10,7 @@ class B2BProposalService {
   }
 
   async generateProposal(companyData) {
-    const proposalId = uuidv4();
+    const proposalId = crypto.randomUUID();
     let aiResult;
 
     try {
