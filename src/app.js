@@ -84,10 +84,10 @@ const startServer = async () => {
     await connectDB();
 
     const PORT = config.server.port;
-    app.listen(PORT, () => {
-      logger.info(`🚀 Rayeva AI Backend running on port ${PORT} [${config.server.env}]`);
-      logger.info(`📋 API docs available at http://localhost:${PORT}/api`);
-      logger.info(`❤️  Health check at http://localhost:${PORT}/health`);
+    app.listen(PORT, '0.0.0.0', () => {
+      logger.info(`Rayeva AI Backend running on port ${PORT} [${config.server.env}]`);
+      logger.info(`API docs available at http://localhost:${PORT}/api`);
+      logger.info(`Health check at http://localhost:${PORT}/health`);
     });
   } catch (error) {
     logger.error(`Failed to start server: ${error.message}`);

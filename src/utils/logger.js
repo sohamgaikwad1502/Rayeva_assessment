@@ -1,7 +1,41 @@
 const winston = require('winston');
 const path = require('path');
 
+const isProduction = process.env.NODE_ENV === 'production';
 const logDir = path.resolve(__dirname, '../../logs');
+
+const transports = [
+  new winston.transports.Console({
+    format: winston.format.combine(
+      winston.format.colorize(),
+      winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
+        const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
+        return `${timestamp} [${service}] ${level}: ${message}${metaStr}`;
+      })
+    ),
+  }),
+];
+
+if (!isProduction) {
+  transports.push(
+    new winston.transports.File({
+      filename: path.join(logDir, 'app.log'),
+      maxsize: 5 * 1024 * 1024,
+      maxFiles: 5,
+    }),
+    new winston.transports.File({
+      filename: path.join(logDir, 'error.log'),
+      level: 'error',
+      maxsize: 5 * 1024 * 1024,
+      maxFiles: 5,
+    }),
+    new winston.transports.File({
+      filename: path.join(logDir, 'ai_logs/ai_interactions.log'),
+      maxsize: 10 * 1024 * 1024,
+      maxFiles: 10,
+    })
+  );
+}
 
 const logger = winston.createLogger({
   level: process.env.LOG_LEVEL || 'info',
@@ -11,37 +45,7 @@ const logger = winston.createLogger({
     winston.format.json()
   ),
   defaultMeta: { service: 'rayeva-ai' },
-  transports: [
-
-    new winston.transports.Console({
-      format: winston.format.combine(
-        winston.format.colorize(),
-        winston.format.printf(({ timestamp, level, message, service, ...meta }) => {
-          const metaStr = Object.keys(meta).length ? ` ${JSON.stringify(meta)}` : '';
-          return `${timestamp} [${service}] ${level}: ${message}${metaStr}`;
-        })
-      ),
-    }),
-
-    new winston.transports.File({
-      filename: path.join(logDir, 'app.log'),
-      maxsize: 5 * 1024 * 1024,
-      maxFiles: 5,
-    }),
-
-    new winston.transports.File({
-      filename: path.join(logDir, 'error.log'),
-      level: 'error',
-      maxsize: 5 * 1024 * 1024,
-      maxFiles: 5,
-    }),
-
-    new winston.transports.File({
-      filename: path.join(logDir, 'ai_logs/ai_interactions.log'),
-      maxsize: 10 * 1024 * 1024,
-      maxFiles: 10,
-    }),
-  ],
+  transports,
 });
 
 module.exports = logger;
